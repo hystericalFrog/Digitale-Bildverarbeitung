@@ -9,8 +9,8 @@ import platform
 import numpy as np
 import datetime
 
-DEFAULT_CAMERA = 0
-DEFAULT_MODE = "virtual_cam"  # "screen", "virtual_cam"
+DEFAULT_CAMERA = 1
+DEFAULT_MODE = "screen"  # "screen", "virtual_cam"
 DEFAULT_VIDEO = "DEFAULT VIDEO TO SHOW"
 WINDOW_NAME = "Output"
 FRAMERATE = 30
@@ -100,6 +100,7 @@ while True:
     last_read = datetime.datetime.now()
     # Read, process and show image
     ret, img = cap.read()
+    img = np.flip(img, axis=1)
     if not ret and type(input_source) == str:
         cap = cv2.VideoCapture(input_source)
         ret, img = cap.read()
