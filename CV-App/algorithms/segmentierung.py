@@ -34,22 +34,8 @@ class Segmentierung(Algorithm):
         img = img.astype(np.float64)
         img[:, :, 2] = 255 * (img[:, :, 2] - np.min(img[:, :, 2])) / (np.max(img[:, :, 2]) - np.min(img[:, :, 2]))
         img = img.astype(np.uint8)
-        #img = cv2.cvtColor(img, cv2.COLOR_HSV2BGR)
 
         '''Statisches Schwellwertverfahren'''
-        #blue
-        channelb = 0
-        lower_boundb, upper_boundb = 25, 50
-        is_condition_b_true = (lower_boundb < img[:, :, channelb]) * (img[:, :, channelb] < upper_boundb)
-        #green
-        channelg = 1
-        lower_boundg, upper_boundg = 22, 32
-        is_condition_g_true = (lower_boundg < img[:, :, channelg]) * (img[:, :, channelg] < upper_boundg)
-        # red
-        channelr = 2
-        lower_boundr, upper_boundr = 140, 175
-        is_condition_r_true = (lower_boundr < img[:, :, channelr]) * (img[:, :, channelr] < upper_boundr)
-
         # hue
         channelh = 0
         lower_boundh, upper_boundh = 5, 15
@@ -59,13 +45,13 @@ class Segmentierung(Algorithm):
         lower_bounds, upper_bounds = 100, 160
         is_condition_s_true = (lower_bounds < img[:, :, channels]) * (img[:, :, channels] < upper_bounds)
 
-        self.binary_mask = is_condition_h_true * is_condition_s_true  #is_condition_b_true # * is_condition_g_true * is_condition_r_true
+        self.binary_mask = is_condition_h_true * is_condition_s_true
         self.binary_mask = self.binary_mask.astype(np.uint8) * 255
 
         img = cv2.cvtColor(img, cv2.COLOR_HSV2BGR)
         self.img = img
 
-        '''binärmaske'''
+        '''Binärmaske'''
         kernel = np.ones(shape=(5, 5))
         self.binary_mask = cv2.erode(self.binary_mask, kernel)
         self.binary_mask = cv2.dilate(self.binary_mask, kernel)
@@ -77,9 +63,6 @@ class Segmentierung(Algorithm):
             c = max(cnts, key=cv2.contourArea, default=0)
             mask = cv2.drawContours(mask, [c], -1, color=0, thickness=-1)
             maskinv = cv2.drawContours(maskinv, [c], -1, (1, 1, 1), thickness=-1)
-
-
-
 
         if self.background is not None:
             img = mask * img + self.background * maskinv
